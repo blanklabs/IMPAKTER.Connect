@@ -1,0 +1,8 @@
+# package directories
+node_modules
+db_connection.js
+
+# Serverless directories
+.serverless
+
+jspm_packages
