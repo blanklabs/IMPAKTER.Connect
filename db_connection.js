@@ -2,6 +2,9 @@
 const mysql = require('mysql');
 const util = require('util');
 
+//todo - import pool from Shared.Code - Config/Impakter
+
+
 pool.getConnection((err, connection) => {
     if (err) {
         if (err.code === 'PROTOCOL_CONNECTION_LOST') {
