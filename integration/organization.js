@@ -1,4 +1,4 @@
-var connection = require("../db_connection")
+var connection = require("../config/db_connection")
 const { v4: uuidv4 } = require('uuid');
 
 

@@ -1,5 +1,5 @@
 module.exports = function(app) {
-    var certificates = require('./certificates');
-    var organizations = require('./organizations');
+    var certificates = require('./certificate');
+    var organizations = require('./organization');
     app.use('/api', [certificates,organizations]);
 };

@@ -1,7 +1,7 @@
 //const Mysql = require('sync-mysql');
-const mysql = require('mysql');
-const util = require('util');
 
+const util = require('util');
+const pool = require('./db')
 //todo - import pool from Shared.Code - Config/Impakter
 
 

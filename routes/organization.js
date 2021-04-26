@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var organization = require('../controllers/organization');
+var organization = require('../integration/organization');
 
 router.route('/organizations/:organizationID?')
     .get(organization.apiGet)

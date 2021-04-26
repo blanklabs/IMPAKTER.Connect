@@ -1,24 +1,23 @@
-var CertificateResponse = require("../BO/certificateResponseObj.js");
+const CertificateResponse = require("../models/certificateResponseObj.js");
 //var sdg = require("./sdgs.js")
-var connection = require("../db_connection")
-var pool = require("../db_connection")
+const connection = require("../config/db_connection");
+const pool = require("../config/db_connection");
 
-exports.apiGET = async function(req, res) {
-
-
-        try
+exports.apiGET = async function(req) {
+    let sql_resp;
+    try
         {
-            var certificates = []
+            let certificates = [];
             if(req.params.ID) {
-                var sql_resp = await pool.query('select * from certificates where organizationID = ?', req.params.ID)
+                sql_resp = await pool.query('select * from certificates where organizationID = ?', req.params.ID);
             }
             else {
-                var sql_resp = await pool.query('select * from certificates')
+                sql_resp = await pool.query('select * from certificates');
             }
 
             for (i = 0; i < sql_resp.length; i++) {
-                var certificateID = sql_resp[i].certificateID
-                var sdgs = [];
+                const certificateID = sql_resp[i].certificateID;
+                let sdgs = [];
                 var sdgTargets = [];
                 var industries = [];
                 var industrySectors = [];
@@ -53,13 +52,14 @@ exports.apiGET = async function(req, res) {
                 var certificateResponse = new CertificateResponse(sql_resp[i], sdgs, sdgTargets,industries,industrySectors,documents)
                 certificates.push(certificateResponse)
             }
-            res.json(certificates);
-            console.log("fetched certificates sucessfully")
+            console.log("fetched certificates sucessfully");
+            return certificates;
         }
         catch(err) {
-            res.json({msg:"Failed to fetch the certificates",status:0});
+
             console.log("failed to fetch with the following error:")
-            console.log(err)
+            console.log(err);
+            return {msg:"Failed to fetch the certificates",status:0};
         }
 
 

@@ -1,4 +1,4 @@
-var pool = require("../db_connection")
+var pool = require("../config/db_connection")
 
 
 exports.getSdgs = async function(certificateID) {
