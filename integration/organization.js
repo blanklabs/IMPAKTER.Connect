@@ -25,10 +25,10 @@ exports.apiGet = async function(req) {
         connection.query('SELECT * from certificateOrganizations', (err, sql_resp) => {
             if(err) throw err;
             else{
-                //let ret = {msg:"Orgs fetched successfully",organizations: sql_resp};
                 console.log("sql resp:",sql_resp)
-                //console.log("Org Resp:",ret)
-                return sql_resp }
+                let resp = Object.values(JSON.parse(JSON.stringify(sql_resp)))
+                console.log("resp:",resp)
+                return resp }
         });
     }
 
