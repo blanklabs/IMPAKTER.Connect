@@ -5,7 +5,7 @@ const certificate = require('../core/certificate');
 
 router.route('/certificates/:ID?')
     .get(certificate.getCertificate)
-    .post(certificates.apiPOST)
-    .put(certificates.apiPUT)
-    .delete(certificates.apiDELETE)
+    .post(certificate.postCertificate)
+    //.put(certificate.putCertificate)
+    //.delete(certificates.deleteCertificate)
 module.exports = router;

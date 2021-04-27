@@ -1,7 +1,16 @@
-var certificate = require('../integration/certificate');
+const certificate = require('../integration/certificate');
 
 
-exports.getCertificate = function(req, res){
-    let resp = certificate.apiGET(req)
-res.json(resp);
+async function getCertificate(req, res) {
+    let resp = await certificate.fetchCertificate(req)
+    res.json(resp);
 };
+
+
+async function postCertificate(req, res) {
+    let resp = await certificate.addCertificate(req)
+    res.json(resp);
+};
+
+
+module.exports = {getCertificate, postCertificate}

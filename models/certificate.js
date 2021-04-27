@@ -1,4 +1,4 @@
-class CertificateResponse {
+class Certificate {
     constructor(details,sdgs,sdgTargets,industries,industrySectors,documents){
         this.details = details
         this.sdgs = sdgs
@@ -8,6 +8,7 @@ class CertificateResponse {
         this.documents = documents
     }
 
+
 }
 
-module.exports = CertificateResponse
+module.exports = Certificate

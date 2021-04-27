@@ -14,23 +14,26 @@ exports.apiGetAll = function(req) {
 
 exports.apiGet = async function(req) {
 
-    if(req.params.organizationID){
-        connection.query('SELECT * from certificateOrganizations where organizationID = ?',req.params.organizationID, (err, sql_resp) => {
-        if(err) throw err;
+    return new Promise((resolve, reject) => {
+        if(req.params.organizationID){
+            connection.query('SELECT * from certificateOrganizations where organizationID = ?',req.params.organizationID, (err, sql_resp) => {
+                if(err) reject(err);
+                else{
+                    let ret = {msg:"Org fetched successfully",organizationDetails: sql_resp}
+                    resolve(ret)}
+            });}
         else{
-            let ret = {msg:"Org fetched successfully",organizationDetails: sql_resp}
-            return ret}
-    });}
-    else{
-        connection.query('SELECT * from certificateOrganizations', (err, sql_resp) => {
-            if(err) throw err;
-            else{
-                console.log("sql resp:",sql_resp)
-                let resp = Object.values(JSON.parse(JSON.stringify(sql_resp)))
-                console.log("resp:",resp)
-                return resp }
-        });
-    }
+            connection.query('SELECT * from certificateOrganizations', (err, sql_resp) => {
+                if(err) reject(err);
+                else{
+                    //console.log("sql resp:",sql_resp)
+                    let resp = Object.values(JSON.parse(JSON.stringify(sql_resp)))
+                    //console.log("resp:",resp)
+                    resolve(resp)}
+            });
+        }
+
+    })
 
 
 
