@@ -12,5 +12,15 @@ async function postCertificate(req, res) {
     res.json(resp);
 };
 
+async function putCertificate(req, res) {
+    let resp = await certificate.updateCertificate(req)
+    res.json(resp);
+};
 
-module.exports = {getCertificate, postCertificate}
+async function deleteCertificate(req, res) {
+    let resp = await certificate.deleteCertificate(req)
+    res.json(resp);
+};
+
+
+module.exports = {getCertificate, postCertificate, putCertificate,deleteCertificate }

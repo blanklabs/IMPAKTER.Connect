@@ -240,7 +240,7 @@ exports.addCertificate = async function (req) {
 
 };
 
-exports.apiDELETE = async function (req, res) {
+exports.deleteCertificate = async function (req, res) {
     try {
         if (req.params.ID) {
             var certificateId = req.params.ID;
@@ -267,7 +267,7 @@ exports.apiDELETE = async function (req, res) {
 
 };
 
-exports.apiPUT = async function (req, res) {
+exports.updateCertificate = async function (req, res) {
     if (req.body.mode == "statusChange") {
         try {
             var certificateId = req.body.certificateID
