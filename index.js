@@ -1,21 +1,23 @@
 var express = require('express');
 var mongoose = require('mongoose');
-var bodyparser = require('body-parser');
+var bodyParser = require('body-parser');
 const cors = require('cors');
 var path = require('path');
+const cookieParser = require('cookie-parser')
 
+require('dotenv').config()
 
 var app = express();
-
 
 const port = 3030;
 //const route = require('./routes');
 const routes = require('./routes/index')
 
-
 app.use(cors())
 
-app.use(bodyparser.json());
+app.use(bodyParser.json());
+app.use(cookieParser())
+
 
 //app.use('/api',route)
 routes(app);
