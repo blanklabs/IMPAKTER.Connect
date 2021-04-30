@@ -1,13 +1,15 @@
 const loginCases = {
-NEWUSER:"NEWUSER",
-FAILEDLOGIN: "FAILEDLOGIN",
-SUCCESS: "SUCCESS"
+    NEWUSER: "NEWUSER",
+    FAILEDLOGIN: "FAILEDLOGIN",
+    SUCCESS: "SUCCESS"
 }
 
 const signupCases = {
-    EXISTING:"EXISTING",
+    EXISTING: "EXISTING",
     SUCCESS: "SUCCESS",
     FAILED: "FAILED"
-    }
+}
 
-module.exports = {loginCases, signupCases}
+//export { loginCases, signupCases }
+
+module.exports = { loginCases, signupCases }

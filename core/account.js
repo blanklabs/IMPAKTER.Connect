@@ -1,12 +1,12 @@
+//import { loginCases, signupCases } from '../models/account.js';
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 const user = require('../integration/user');
 const transport = require('../models/transport');
-const { loginCases,signupCases } = require('../models/account');
 const User = require('./user');
-
+const { loginCases, signupCases } = require('../models/account.js');
 
 
 function processJWT(currentUser) {
@@ -132,4 +132,4 @@ async function signup(req, res) {
 
 }
 
-    module.exports = { login, signup }
+module.exports = { login, signup }
