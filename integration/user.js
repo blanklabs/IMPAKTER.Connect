@@ -1,19 +1,29 @@
-const user = require("../models/user.js");
+const user = require("../models/User.js");
 const pool = require("../config/db_connection");
 
 
-async function fetchUser(email){
+async function fetchUserById(userID){
+    return new Promise(async (resolve) => {
+        let sql_resp = await pool.query('select * from users.users where userID = ?', userID);
+        resolve(sql_resp);
+    })
+}
 
+
+async function fetchUser(email){
     return new Promise(async (resolve) => {
         let sql_resp = await pool.query('select * from users.users where email = ?', email);
         resolve(sql_resp);
     })
-
-
-    
 }
 
-async function addUser(req){
+async function addUser(newUser){
+    return new Promise(async (resolve) => {
+        let sql_resp = await pool.query('insert into users.users set ?', newUser);
+        let userID = sql_resp.insertId;
+        let currentUser = await fetchUserById(userID);
+        resolve(currentUser);
+    })
 
 }
 

@@ -4,4 +4,10 @@ FAILEDLOGIN: "FAILEDLOGIN",
 SUCCESS: "SUCCESS"
 }
 
-module.exports = {loginCases}
+const signupCases = {
+    EXISTING:"EXISTING",
+    SUCCESS: "SUCCESS",
+    FAILED: "FAILED"
+    }
+
+module.exports = {loginCases, signupCases}
