@@ -1,5 +1,5 @@
 
-
+/*
 module.exports = function (app) {
     const certificates = require('./certificate');
     const organizations = require('./organization');
@@ -7,4 +7,14 @@ module.exports = function (app) {
 
 
     app.use('/api', [certificates, organizations, account]);
+};
+
+*/
+
+
+//import certificates from './certificate.js';
+import account from './account.js';
+
+export default function (app) {
+    app.use('/api', [account]);
 };

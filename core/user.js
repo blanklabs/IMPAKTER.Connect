@@ -1,4 +1,4 @@
-class User {
+export default class User {
     userID = null
     firstName = ""
     lastName = ""
@@ -8,4 +8,4 @@ class User {
     orgID = null
 }
 
-module.exports = User
+//module.exports = User

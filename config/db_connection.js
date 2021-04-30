@@ -1,8 +1,13 @@
 //const Mysql = require('sync-mysql');
 
-const util = require('util');
-const pool = require('./db')
+//const util = require('util');
+//const pool = require('./db')
 //todo - import pool from Shared.Code - Config/Impakter
+
+
+
+import util from 'util';
+import { pool } from './db.js';
 
 
 pool.getConnection((err, connection) => {
@@ -27,4 +32,5 @@ pool.getConnection((err, connection) => {
 pool.query = util.promisify(pool.query);
 
 
-module.exports = pool;
+//module.exports = pool;
+export default pool;

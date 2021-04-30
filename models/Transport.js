@@ -5,17 +5,18 @@ class Transport {
     }
     data = {}
 
-constructor(){
+    constructor() {
 
-}
+    }
 
 
 }
 
 const codes = {
-	SUCCESS: 1,
-	FAILURE: 0,
+    SUCCESS: 1,
+    FAILURE: 0,
     DEFAULT: null
 }
 
-module.exports = {Transport, codes }
+//module.exports = {Transport, codes }
+export { Transport, codes }

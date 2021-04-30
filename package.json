@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Impakter Certificate Tool backend",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "test"
   },
@@ -17,7 +18,7 @@
   "author": "Aravind Samala",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.850.0",
+    "aws-sdk": "^2.897.0",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
@@ -27,10 +28,11 @@
     "express-openid-connect": "^2.3.1",
     "json-web-token": "^3.2.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.11.12",
+    "mongoose": "^5.12.7",
     "mysql": "^2.18.1",
     "nodemon": "^2.0.7",
-    "serverless": "^2.21.1",
+    "serverless": "^2.39.0",
+    "shared.code": "git+https://github.com/Impakter/SHARED.CODE.git",
     "sync-mysql": "^3.0.1",
     "sync-sql": "^1.0.2",
     "uuid": "^8.3.2"

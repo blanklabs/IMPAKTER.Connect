@@ -1,4 +1,4 @@
-
+/*
 var express = require('express');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
@@ -9,20 +9,25 @@ require('dotenv').config()
 
 //const route = require('./routes');
 const routes = require('./routes/index')
+*/
 
 
 
-/*
+import { certificateModel } from "../SHARED.CODE/index.mjs";
+
+
+
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import cookieParser from 'cookie-parser';
+import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 
-import routes from './routes/index';
+import routes from './routes/index.js';
 
 dotenv.config();
-*/
+
 
 
 var app = express();
@@ -39,7 +44,7 @@ app.use(cookieParser())
 
 //app.use('/api',route)
 routes(app);
-
+let __dirname = path.resolve(path.dirname(''));
 app.use(express.static(path.join(__dirname, 'public')));
 
 

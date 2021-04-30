@@ -10,6 +10,6 @@ const signupCases = {
     FAILED: "FAILED"
 }
 
-//export { loginCases, signupCases }
+export { loginCases, signupCases }
 
-module.exports = { loginCases, signupCases }
+//module.exports = { loginCases, signupCases }

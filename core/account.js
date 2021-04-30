@@ -1,4 +1,5 @@
 //import { loginCases, signupCases } from '../models/account.js';
+/*
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
@@ -7,6 +8,18 @@ const user = require('../integration/user');
 const transport = require('../models/transport');
 const User = require('./user');
 const { loginCases, signupCases } = require('../models/account.js');
+//const { certificateModel } = require('../../SHARED.CODE');
+*/
+
+
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+const saltRounds = 10;
+
+import { fetchUser, addUser } from '../integration/user.js';
+import { Transport, codes } from '../models/transport.js';
+import User from './user.js';
+import { loginCases, signupCases } from '../models/account.js';
 
 
 function processJWT(currentUser) {
@@ -67,10 +80,11 @@ function hashPassword(password) {
 
 
 async function login(req, res) {
-    let currentUsers = await user.fetchUser(req.body.email);
-    let response = new transport.Transport();
+    //let obj = new certificateModel();
+    let currentUsers = await fetchUser(req.body.email);
+    let response = new Transport();
     if (currentUsers == []) {
-        response.status.code = transport.codes.SUCCESS;
+        response.status.code = codes.SUCCESS;
         response.status.case = loginCases.NEWUSER;
         response.status.message = "No User found";
     }
@@ -80,13 +94,13 @@ async function login(req, res) {
         if (status) {
             let accessToken = await processJWT(currentUser)
             response.data.accessToken = accessToken;
-            response.status.code = transport.codes.SUCCESS;
+            response.status.code = codes.SUCCESS;
             response.status.case = loginCases.SUCCESS;
             response.status.message = "Login Successful";
             res.cookie("jwt", accessToken, { secure: true, httpOnly: true })
         }
         else {
-            response.status.code = transport.codes.SUCCESS;
+            response.status.code = codes.SUCCESS;
             response.status.case = loginCases.FAILEDLOGIN;
             response.status.message = "Wrong password";
         }
@@ -109,21 +123,21 @@ async function signup(req, res) {
     //check user already exists, hash password, add user to db, generate jwt
     let newUser = new User();
     newUser = req.body.data;
-    let currentUsers = await user.fetchUser(newUser.email);
-    let response = new transport.Transport();
+    let currentUsers = await fetchUser(newUser.email);
+    let response = new Transport();
     if (currentUsers.length == 0) {
         let passwordHash = await hashPassword(newUser.password);
         newUser.password = passwordHash;
-        let currentUser = await user.addUser(newUser)
+        let currentUser = await addUser(newUser)
         let accessToken = await processJWT(currentUser);
         response.data.accessToken = accessToken;
-        response.status.code = transport.codes.SUCCESS;
+        response.status.code = codes.SUCCESS;
         response.status.case = signupCases.SUCCESS;
         response.status.message = "SignUp Successful";
         res.cookie("jwt", accessToken, { secure: true, httpOnly: true })
     }
     else {
-        response.status.code = transport.codes.SUCCESS;
+        response.status.code = codes.SUCCESS;
         response.status.case = signupCases.EXISTING;
         response.status.message = "User already exists";
     }
@@ -132,4 +146,5 @@ async function signup(req, res) {
 
 }
 
-module.exports = { login, signup }
+//module.exports = { login, signup }
+export { login, signup }
