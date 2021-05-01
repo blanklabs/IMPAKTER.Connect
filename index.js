@@ -14,7 +14,10 @@ const routes = require('./routes/index')
 
 
 import { certificateModel } from "../SHARED.CODE/index.mjs";
+//import { certificateModel } from "shared.code";
 
+//import pkg from 'shared.code';
+//const { certificateModel } = pkg;
 
 
 import express from 'express';
