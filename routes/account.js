@@ -17,10 +17,10 @@ import express from 'express';
 const router = express.Router();
 import { login, signup } from '../core/account.js';
 
-router.route('/login')
+router.route('/account/login')
     .post(login)
 
-router.route('/signup')
+router.route('/account/signup')
     .post(signup)
 
 export default router;
