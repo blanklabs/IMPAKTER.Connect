@@ -8,7 +8,16 @@ import pool from "../config/db_connection.js";
 async function fetchUserById(userID) {
     return new Promise(async (resolve) => {
         let sql_resp = await pool.query('select * from users.users where userID = ?', userID);
-        resolve(sql_resp);
+        resolve(sql_resp[0]);
+    })
+}
+
+
+async function fetchUserProfileById(userID) {
+    return new Promise(async (resolve) => {
+        //todo - stored proceudure to join roles and orgs and fetch all details
+        let sql_resp = await pool.query('select userID,firstName,lastName,email from users.users where userID = ?', userID);
+        resolve(sql_resp[0]);
     })
 }
 
@@ -29,6 +38,9 @@ async function addUser(newUser) {
     })
 
 }
+
+//updateUser
+
 
 //module.exports = {fetchUser, addUser}
 export { fetchUser, addUser }

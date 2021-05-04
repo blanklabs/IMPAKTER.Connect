@@ -106,7 +106,7 @@ async function login(req, res) {
             }
             else {
                 response.status.code = transportCodes.SUCCESS;
-                response.status.case = loginCases.FAILEDLOGIN;
+                response.status.case = loginCases.INCORRECTPASSWORD;
                 response.status.message = "Wrong password";
             }
 
@@ -152,6 +152,7 @@ async function signup(req, res) {
             let currentUser = await addUser(newUser)
             let accessToken = await processJWT(currentUser);
             response.data.accessToken = accessToken;
+            response.data.user = currentUser;
             response.status.code = transportCodes.SUCCESS;
             response.status.case = signupCases.SUCCESS;
             response.status.message = "SignUp Successful";
@@ -171,6 +172,7 @@ async function signup(req, res) {
     }
 
 
+    console.log("sending response for signup:", response)
     res.json(response);
 
 }
