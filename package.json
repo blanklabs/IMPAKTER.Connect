@@ -32,6 +32,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.7",
     "mysql": "^2.18.1",
+    "nodemailer": "^6.6.0",
     "serverless": "^2.39.0",
     "shared.code": "git+https://github.com/Impakter/SHARED.CODE.git",
     "sync-mysql": "^3.0.1",

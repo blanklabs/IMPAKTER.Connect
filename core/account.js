@@ -26,7 +26,7 @@ import { fetchUser, addUser } from '../integration/user.js';
 //import { loginCases, signupCases } from '../models/account.js';
 import { Transport, transportCodes, User, loginCases, signupCases, signupModel } from "../../SHARED.CODE/index.mjs";
 //import { Transport, transportCodes, User, loginCases, signupCases, signupModel  } from "shared.code/index.mjs";
-
+import { sendEmail } from '../integration/external/email.js'
 
 
 function processJWT(currentUser) {
@@ -165,7 +165,7 @@ async function login(req, res) {
 
 async function signup(req, res) {
     let response = new Transport();
-
+    console.log("process.env.MAIL_USERNAME:", process.env.MAIL_USERNAME)
     //todo - implement signup
     //check user already exists, hash password, add user to db, generate jwt
     let newSignUpModel = new signupModel();
@@ -187,6 +187,7 @@ async function signup(req, res) {
             newUser.password = passwordHash;
             let currentUser = await addUser(newUser)
             let accessToken = await processJWT(currentUser);
+            sendEmail("Signup Successful");
             response.data.accessToken = accessToken;
             response.data.user = currentUser;
             response.status.code = transportCodes.SUCCESS;
