@@ -27,16 +27,13 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 
+
 import routes from './routes/index.js';
 
 dotenv.config();
-
-
-
 var app = express();
 
 const port = 3030;
-
 
 
 app.use(cors())

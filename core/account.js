@@ -15,6 +15,10 @@ const { loginCases, signupCases } = require('../models/account.js');
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 const saltRounds = 10;
+import { OAuth2Client } from 'google-auth-library';
+
+const client = new OAuth2Client('1034424481051-2068pl88n61ofbmnocqbdgk9fk8i9o20.apps.googleusercontent.com');
+
 
 import { fetchUser, addUser } from '../integration/user.js';
 //import { Transport, codes as transportCodes } from '../models/transport.js';
@@ -79,15 +83,42 @@ function hashPassword(password) {
 }
 
 
+function processGoogleLogin(googleData) {
+    return new Promise(async (resolve) => {
+        const ticket = await client.verifyIdToken({
+            idToken: googleData.qc.id_token,
+            audience: '1034424481051-2068pl88n61ofbmnocqbdgk9fk8i9o20.apps.googleusercontent.com'
+        });
+        const payload = ticket.getPayload();
+        const userID = payload['sub'];
+        let email = payload['email'];
+        let name = payload["name"];
+        let pictureUrl = payload["picture"];
+        console.log("------ Google Details -----", userID, email, name, pictureUrl)
+        resolve(email)
+    })
 
+
+
+}
 
 
 async function login(req, res) {
     let currentUser = new User();
-    currentUser = req.body.data;
     let response = new Transport();
-    if (currentUser.email) {
-        let currentUsers = await fetchUser(currentUser.email);
+    const currentCase = req.body.status.case
+    let email;
+    let verifyStatus;
+
+    if (currentCase == loginCases.GOOGLE) {
+        //email = await processGoogleLogin(req.body.data);
+        email = req.body.data.ft.Qt
+    } else {
+        email = req.body.data.email;
+        currentUser = req.body.data;
+    }
+    if (email) {
+        let currentUsers = await fetchUser(email);
         if (currentUsers.length == 0) {
             response.status.code = transportCodes.SUCCESS;
             response.status.case = loginCases.NEWUSER;
@@ -95,8 +126,13 @@ async function login(req, res) {
         }
         else {
             let userFromDB = currentUsers[0];
-            let status = await verifyPassword(currentUser, userFromDB);
-            if (status) {
+            if (currentCase == loginCases.DIRECT) {
+                verifyStatus = await verifyPassword(currentUser, userFromDB);
+            }
+            else {
+                verifyStatus = true;
+            }
+            if (verifyStatus) {
                 let accessToken = await processJWT(userFromDB)
                 response.data.accessToken = accessToken;
                 response.status.code = transportCodes.SUCCESS;
