@@ -1,8 +1,12 @@
-const Certificate = require("../models/certificate.js");
+//const Certificate = require("../models/certificate.js");
 //const connection = require("../config/db_connection");
-const pool = require("../config/db_connection");
+//const pool = require("../config/db_connection");
 
-function fetchSdgs(certificateID){
+import pool from "../config/db_connection.js";
+import Certificate from "../models/certificate.js";
+
+
+function fetchSdgs(certificateID) {
     return new Promise(async (resolve) => {
         let sdgs = [];
         let sql_resp = await pool.query('select sdgID from certificate_sdg where certificateID = ?', certificateID)
@@ -57,7 +61,7 @@ function fetchDocuments(certificateID) {
     })
 }
 
-exports.fetchCertificate = async function (req) {
+async function fetchCertificate(req) {
     return new Promise(async (resolve, reject) => {
         let sql_resp;
         try {
@@ -99,7 +103,7 @@ exports.fetchCertificate = async function (req) {
 };
 
 //Using stored procedure
-exports.getCertificates = async function (req) {
+async function getCertificates(req) {
     return new Promise(async (resolve, reject) => {
         let sql_resp;
         try {
@@ -198,7 +202,7 @@ exports.apiGET = function(req, res) {
 */
 
 
-exports.addCertificate = async function (req) {
+async function addCertificate(req) {
     return new Promise((resolve, reject) => {
 
         try {
@@ -230,7 +234,7 @@ exports.addCertificate = async function (req) {
             }
 
         } catch (err) {
-            res.json({msg: "Failed to add the certificate", status: 0});
+            res.json({ msg: "Failed to add the certificate", status: 0 });
             console.log("failed to add the certificate with the following error:")
             console.log(err)
         }
@@ -240,7 +244,7 @@ exports.addCertificate = async function (req) {
 
 };
 
-exports.deleteCertificate = async function (req, res) {
+async function removeCertificate(req, res) {
     try {
         if (req.params.ID) {
             var certificateId = req.params.ID;
@@ -255,27 +259,27 @@ exports.deleteCertificate = async function (req, res) {
         setTimeout(respond, 2000);
 
         async function respond() {
-            res.json({msg: "Deleted Certificate successfully", status: 1});
+            res.json({ msg: "Deleted Certificate successfully", status: 1 });
             console.log("deleted certificate successfully")
         }
 
     } catch (err) {
-        res.json({msg: "Failed to delete the certificate", status: 0});
+        res.json({ msg: "Failed to delete the certificate", status: 0 });
         console.log("failed to delete the certificate with the following error:")
         console.log(err)
     }
 
 };
 
-exports.updateCertificate = async function (req, res) {
+async function updateCertificate(req, res) {
     if (req.body.mode == "statusChange") {
         try {
             var certificateId = req.body.certificateID
             var sql_resp = await pool.query('UPDATE certificates SET activeStatus = ? WHERE certificateID = ?', [req.body.basicDetails.activeStatus, certificateId])
-            res.json({msg: "Updated Certificate status successfully", status: 1});
+            res.json({ msg: "Updated Certificate status successfully", status: 1 });
             console.log("updated certificate status successfully")
         } catch (err) {
-            res.json({msg: "Failed to update the status of the certificate", status: 0});
+            res.json({ msg: "Failed to update the status of the certificate", status: 0 });
         }
 
     } else {
@@ -297,12 +301,12 @@ exports.updateCertificate = async function (req, res) {
             setTimeout(respond, 3000);
 
             async function respond() {
-                res.json({msg: "Updated Certificate successfully", status: 1});
+                res.json({ msg: "Updated Certificate successfully", status: 1 });
                 console.log("updated certificate successfully")
             }
 
         } catch (err) {
-            res.json({msg: "Failed to update the certificate", status: 0});
+            res.json({ msg: "Failed to update the certificate", status: 0 });
             console.log("failed to update the certificate with the following error:")
             console.log(err)
         }
@@ -310,3 +314,6 @@ exports.updateCertificate = async function (req, res) {
 
 
 };
+
+
+export { fetchCertificate, updateCertificate, removeCertificate, addCertificate }

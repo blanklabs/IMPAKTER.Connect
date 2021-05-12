@@ -12,9 +12,11 @@ module.exports = function (app) {
 */
 
 
-//import certificates from './certificate.js';
+import certificates from './certificate.js';
 import account from './account.js';
+import news from './news.js';
+import test from './test.js';
 
 export default function (app) {
-    app.use('/api', [account]);
+    app.use('/api', [account, news, certificates, test]);
 };

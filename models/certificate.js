@@ -1,5 +1,5 @@
-class Certificate {
-    constructor(details,sdgs,sdgTargets,industries,industrySectors,documents){
+export default class Certificate {
+    constructor(details, sdgs, sdgTargets, industries, industrySectors, documents) {
         this.details = details
         this.sdgs = sdgs
         this.sdgTargets = sdgTargets
@@ -11,4 +11,4 @@ class Certificate {
 
 }
 
-module.exports = Certificate
+//module.exports = Certificate

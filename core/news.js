@@ -7,7 +7,7 @@ async function getNews(req, res) {
 
     if (req.params.ID) {
         let news = await fetchNews(req.params.ID);
-        if (news != 0) {
+        if (news.length != 0) {
             response.data = news;
             response.status.code = transportCodes.SUCCESS;
             response.status.case = signupCases.SUCCESS;
