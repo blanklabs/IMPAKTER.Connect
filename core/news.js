@@ -1,4 +1,4 @@
-import { Transport, transportCodes, User, loginCases, signupCases, signupModel } from "../../SHARED.CODE/index.mjs";
+import { Transport, transportCodes, User, loginCases, signupCases, userModel } from "../../SHARED.CODE/index.mjs";
 import { fetchNews } from '../integration/news.js';
 
 

@@ -24,8 +24,8 @@ import { fetchUser, addUser } from '../integration/user.js';
 //import { Transport, codes as transportCodes } from '../models/transport.js';
 //import User from '../models/user.js';
 //import { loginCases, signupCases } from '../models/account.js';
-import { Transport, transportCodes, User, loginCases, signupCases, signupModel } from "../../SHARED.CODE/index.mjs";
-//import { Transport, transportCodes, User, loginCases, signupCases, signupModel  } from "shared.code/index.mjs";
+import { Transport, transportCodes, User, loginCases, signupCases, userModel } from "../../SHARED.CODE/index.mjs";
+//import { Transport, transportCodes, User, loginCases, signupCases, userModel  } from "shared.code/index.mjs";
 import { sendEmail } from '../integration/external/email.js'
 
 
@@ -166,7 +166,7 @@ async function login(req, res) {
 async function signup(req, res) {
     let response = new Transport();
     console.log("process.env.MAIL_USERNAME:", process.env.MAIL_USERNAME)
-    let newSignUpModel = new signupModel();
+    let newuserModel = new userModel();
     let newUser = new User();
     const currentCase = req.body.status.case
 
@@ -174,8 +174,8 @@ async function signup(req, res) {
         newUser.email = req.body.data.ft.Qt
         //newuser.firstName = req.body.data.
     } else {
-        newSignUpModel = req.body.data;
-        newUser = newSignUpModel.user;
+        newuserModel = req.body.data;
+        newUser = newuserModel.user;
     }
 
 
@@ -231,15 +231,7 @@ async function signup(req, res) {
 }
 
 
-async function updateUser() {
 
-    if (newSignUpModel.details.company != "") {
-        //check for company name and fetch orgID if company already exists
-        if (newSignUpModel.details.company == "Impakter") {
-            newUser.orgID = 0;
-        }
-    }
-}
 
 //module.exports = { login, signup }
 export { login, signup }

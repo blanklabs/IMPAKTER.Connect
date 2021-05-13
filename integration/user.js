@@ -39,8 +39,13 @@ async function addUser(newUser) {
 
 }
 
-//updateUser
-
+async function updateUser(currentUser) {
+    return new Promise(async (resolve) => {
+        let sql_resp = await pool.query('update users.users set ? where email = ?', [currentuser.email, currentUser]);
+        let status = sql_resp != null ? true : false;
+        resolve(status);
+    })
+}
 
 //module.exports = {fetchUser, addUser}
-export { fetchUser, addUser }
+export { fetchUser, addUser, updateUser }
