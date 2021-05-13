@@ -166,25 +166,33 @@ async function login(req, res) {
 async function signup(req, res) {
     let response = new Transport();
     console.log("process.env.MAIL_USERNAME:", process.env.MAIL_USERNAME)
-    //todo - implement signup
-    //check user already exists, hash password, add user to db, generate jwt
     let newSignUpModel = new signupModel();
-    newSignUpModel = req.body.data;
     let newUser = new User();
-    newUser = newSignUpModel.user;
+    const currentCase = req.body.status.case
 
-    if (newUser.email && newUser.firstName && newUser.password) {
-        if (newSignUpModel.details.company != "") {
-            //check for company name and fetch orgID if company already exists
-            if (newSignUpModel.details.company == "Impakter") {
-                newUser.orgID = 0;
-            }
-        }
+    if (currentCase == loginCases.GOOGLE) {
+        newUser.email = req.body.data.ft.Qt
+        //newuser.firstName = req.body.data.
+    } else {
+        newSignUpModel = req.body.data;
+        newUser = newSignUpModel.user;
+    }
+
+
+    if (newUser.email && newUser.firstName) {
+
 
         let currentUsers = await fetchUser(newUser.email);
         if (currentUsers.length == 0) {
-            let passwordHash = await hashPassword(newUser.password);
-            newUser.password = passwordHash;
+
+            if (currentCase == loginCases.GOOGLE) {
+                newUser.password = "NA";
+            }
+            else if (newUser.password) {
+                let passwordHash = await hashPassword(newUser.password);
+                newUser.password = passwordHash;
+            }
+
             let currentUser = await addUser(newUser)
             let accessToken = await processJWT(currentUser);
             sendEmail("Signup Successful");
@@ -196,9 +204,17 @@ async function signup(req, res) {
             res.cookie("jwt", accessToken, { secure: true, httpOnly: true })
         }
         else {
-            response.status.code = transportCodes.SUCCESS;
-            response.status.case = signupCases.EXISTING;
-            response.status.message = "User already exists";
+
+            if (currentCase == loginCases.GOOGLE) {
+                login(req, res)
+                return
+            }
+            else {
+                response.status.code = transportCodes.SUCCESS;
+                response.status.case = signupCases.EXISTING;
+                response.status.message = "User already exists";
+            }
+
         }
     }
     else {
@@ -212,6 +228,17 @@ async function signup(req, res) {
     console.log("sending response for signup:", response)
     res.json(response);
 
+}
+
+
+async function updateUser() {
+
+    if (newSignUpModel.details.company != "") {
+        //check for company name and fetch orgID if company already exists
+        if (newSignUpModel.details.company == "Impakter") {
+            newUser.orgID = 0;
+        }
+    }
 }
 
 //module.exports = { login, signup }
