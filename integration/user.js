@@ -24,7 +24,8 @@ async function fetchUserProfileById(userID) {
 
 async function fetchUser(email) {
     return new Promise(async (resolve) => {
-        let sql_resp = await pool.query('select * from users.users where email = ?', email);
+        let sql_resp1 = await pool.query('select * from users.users where email = ?', email);
+        let sql_resp = await pool.query('CALL users.spFetchUser(?)', email);
         resolve(sql_resp);
     })
 }

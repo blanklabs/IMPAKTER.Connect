@@ -21,6 +21,8 @@ const client = new OAuth2Client('1034424481051-2068pl88n61ofbmnocqbdgk9fk8i9o20.
 
 
 import { fetchUser, addUser } from '../integration/user.js';
+import { fetchOrg, addOrg } from '../integration/organization.js';
+
 //import { Transport, codes as transportCodes } from '../models/transport.js';
 //import User from '../models/user.js';
 //import { loginCases, signupCases } from '../models/account.js';
@@ -59,9 +61,9 @@ function processJWT(currentUser) {
     })
 }
 
-function verifyPassword(currentUser, userFromDB) {
+function verifyPassword(loggedInUser, currentUser) {
     return new Promise(async (resolve) => {
-        const match = await bcrypt.compare(currentUser.password, userFromDB.password);
+        const match = await bcrypt.compare(loggedInUser.password, currentUser.password);
         let status;
         if (match) {
             status = true;
@@ -104,7 +106,7 @@ function processGoogleLogin(googleData) {
 
 
 async function login(req, res) {
-    let currentUser = new User();
+    let loggedInUser = new User();
     let response = new Transport();
     const currentCase = req.body.status.case
     let email;
@@ -115,25 +117,29 @@ async function login(req, res) {
         email = req.body.data.ft.Qt
     } else {
         email = req.body.data.email;
-        currentUser = req.body.data;
+        loggedInUser = req.body.data;
     }
     if (email) {
-        let currentUsers = await fetchUser(email);
-        if (currentUsers.length == 0) {
+        let usersFromDB = await fetchUser(email);
+        if (usersFromDB.length == 0) {
             response.status.code = transportCodes.SUCCESS;
             response.status.case = loginCases.NEWUSER;
             response.status.message = "No User found";
         }
         else {
-            let userFromDB = currentUsers[0];
+            let currentUser = usersFromDB[0][0];
             if (currentCase == loginCases.DIRECT) {
-                verifyStatus = await verifyPassword(currentUser, userFromDB);
+                verifyStatus = await verifyPassword(loggedInUser, currentUser);
             }
             else {
                 verifyStatus = true;
             }
             if (verifyStatus) {
-                let accessToken = await processJWT(userFromDB)
+                currentUser.password = ""
+                let accessToken = await processJWT(currentUser)
+                let orgs = await fetchOrg(currentUser.orgID);
+                response.data.org = orgs[0];
+                response.data.user = currentUser;
                 response.data.accessToken = accessToken;
                 response.status.code = transportCodes.SUCCESS;
                 response.status.case = loginCases.SUCCESS;
@@ -182,8 +188,8 @@ async function signup(req, res) {
     if (newUser.email && newUser.firstName) {
 
 
-        let currentUsers = await fetchUser(newUser.email);
-        if (currentUsers.length == 0) {
+        let usersFromDB = await fetchUser(newUser.email);
+        if (usersFromDB.length == 0) {
 
             if (currentCase == loginCases.GOOGLE) {
                 newUser.password = "NA";

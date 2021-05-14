@@ -1,11 +1,11 @@
 import pool from "../config/db_connection.js";
-const { v4: uuidv4 } = require('uuid');
+//const { v4: uuidv4 } = require('uuid');
 
 
 async function fetchAllOrgs() {
     return new Promise(async (resolve, reject) => {
         try {
-            sql_resp = await pool.query('SELECT * from certificateOrganizations');
+            let sql_resp = await pool.query('SELECT * from certificateOrganizations');
             resolve(sql_resp);
         }
         catch (err) {
@@ -20,7 +20,7 @@ async function fetchAllOrgs() {
 async function fetchOrgByName(orgName) {
     return new Promise(async (resolve, reject) => {
         try {
-            sql_resp = await pool.query('SELECT * from certificateOrganizations where name = ?', orgName);
+            let sql_resp = await pool.query('SELECT * from certificateOrganizations where name = ?', orgName);
             resolve(sql_resp);
         }
         catch (err) {
@@ -32,10 +32,10 @@ async function fetchOrgByName(orgName) {
 }
 
 async function addOrg(orgName) {
-    orgID = uuidv4()
+    //orgID = uuidv4()
     return new Promise(async (resolve, reject) => {
         try {
-            sql_resp = await pool.query('INSERT INTO certificateOrganizations (organizationID,name) VALUES (?,?)', [orgID, orgName]);
+            let sql_resp = await pool.query('INSERT INTO certificateOrganizations (organizationID,name) VALUES (?,?)', [orgID, orgName]);
             resolve(sql_resp);
         }
         catch (err) {
@@ -49,7 +49,7 @@ async function addOrg(orgName) {
 async function fetchOrg(ID) {
     return new Promise(async (resolve, reject) => {
         try {
-            sql_resp = await pool.query('SELECT * from certificateOrganizations where organizationID = ?', ID);
+            let sql_resp = await pool.query('SELECT * from organizations.orgs where orgID = ?', ID);
             resolve(sql_resp);
         }
         catch (err) {
