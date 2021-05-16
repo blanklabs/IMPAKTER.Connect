@@ -31,12 +31,12 @@ import { Transport, transportCodes, User, loginCases, signupCases, userModel } f
 import { sendEmail } from '../integration/external/email.js'
 
 
-function processJWT(currentUser) {
+function processJWT(currentUser, organization) {
     return new Promise(async (resolve, reject) => {
 
         try {
             //todo - claims
-            let payload = { email: currentUser.email, role: currentUser.roleID }
+            let payload = { email: currentUser.email, role: currentUser.roleID, org: organization }
 
 
             let accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
@@ -136,8 +136,8 @@ async function login(req, res) {
             }
             if (verifyStatus) {
                 currentUser.password = ""
-                let accessToken = await processJWT(currentUser)
                 let orgs = await fetchOrg(currentUser.orgID);
+                let accessToken = await processJWT(currentUser, orgs[0])
                 response.data.org = orgs[0];
                 response.data.user = currentUser;
                 response.data.accessToken = accessToken;
@@ -172,7 +172,6 @@ async function login(req, res) {
 async function signup(req, res) {
     let response = new Transport();
     console.log("process.env.MAIL_USERNAME:", process.env.MAIL_USERNAME)
-    let newuserModel = new userModel();
     let newUser = new User();
     const currentCase = req.body.status.case
 
@@ -180,16 +179,11 @@ async function signup(req, res) {
         newUser.email = req.body.data.ft.Qt
         //newuser.firstName = req.body.data.
     } else {
-        newuserModel = req.body.data;
-        newUser = newuserModel.user;
+        newUser = req.body.data;
     }
-
-
     if (newUser.email && newUser.firstName) {
-
-
         let usersFromDB = await fetchUser(newUser.email);
-        if (usersFromDB.length == 0) {
+        if (usersFromDB[0].length == 0) {
 
             if (currentCase == loginCases.GOOGLE) {
                 newUser.password = "NA";

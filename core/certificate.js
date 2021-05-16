@@ -1,12 +1,12 @@
 //const certificate = require('../integration/certificate');
-import { fetchCertificate, addCertificate, updateCertificate, removeCertificate } from '../integration/certificate.js';
+import { fetchCertificates, addCertificate, updateCertificate, removeCertificate } from '../integration/certificate.js';
 
 
 
 
 async function getCertificate(req, res) {
-    let resp = await fetchCertificate(req)
-    res.json(resp);
+    let resp = await fetchCertificates(req)
+    res.json({ status: { code: 1 }, data: resp });
 };
 
 

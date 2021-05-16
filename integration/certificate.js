@@ -61,7 +61,7 @@ function fetchDocuments(certificateID) {
     })
 }
 
-async function fetchCertificate(req) {
+async function fetchCertificates(req) {
     return new Promise(async (resolve, reject) => {
         let sql_resp;
         try {
@@ -240,4 +240,4 @@ async function updateCertificate(req, res) {
 };
 
 
-export { fetchCertificate, updateCertificate, removeCertificate, addCertificate }
+export { fetchCertificates, updateCertificate, removeCertificate, addCertificate }

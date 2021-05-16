@@ -31,11 +31,18 @@ async function fetchUser(email) {
 }
 
 async function addUser(newUser) {
-    return new Promise(async (resolve) => {
-        let sql_resp = await pool.query('insert into users.users set ?', newUser);
-        let userID = sql_resp.insertId;
-        let currentUser = await fetchUserById(userID);
-        resolve(currentUser);
+    return new Promise(async (resolve, reject) => {
+        //let sql_resp1 = await pool.query('insert into users.users set ?', newUser);
+        try {
+            let sql_resp = await pool.query('insert into users.users (email,firstName,lastName,password) values (?,?,?,?)', [newUser.email, newUser.firstName, newUser.lastName, newUser.password]);
+            let userID = sql_resp.insertId;
+            let currentUser = await fetchUserById(userID);
+            resolve(currentUser);
+        }
+        catch (err) {
+            reject(err)
+        }
+
     })
 
 }

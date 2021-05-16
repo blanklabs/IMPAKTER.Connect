@@ -13,10 +13,8 @@ import { getOrgByName } from '../integration/organization.js'
 
 async function putUser(req, res) {
     let response = new Transport();
-    let newuserModel = new userModel();
     let currentUser = new User();
-    newuserModel = req.body.data;
-    currentUser = newuserModel.user;
+    currentUser = req.body.data;
 
     if (!currentUser.orgID) {
         // let isWorkEmail = Utils.checkForWorkEmail(currentUser.email)
