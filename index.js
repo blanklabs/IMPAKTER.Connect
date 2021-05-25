@@ -26,7 +26,7 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
-
+import fileUpload from 'express-fileupload';
 
 import routes from './routes/index.js';
 
@@ -35,9 +35,9 @@ var app = express();
 
 const port = 3030;
 
-
+app.use(express.static('public'));
 app.use(cors())
-
+app.use(fileUpload());
 app.use(bodyParser.json());
 app.use(cookieParser())
 

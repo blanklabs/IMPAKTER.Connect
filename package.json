@@ -25,6 +25,7 @@
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "express-fileupload": "^1.2.1",
     "express-openid-connect": "^2.3.1",
     "google-auth-library": "^7.0.4",
     "googleapis": "^73.0.0",

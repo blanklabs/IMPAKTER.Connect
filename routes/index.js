@@ -17,6 +17,8 @@ import account from './account.js';
 import news from './news.js';
 import test from './test.js';
 
+import publications from './tools_certificates/publications.js';
+
 export default function (app) {
-    app.use('/api', [account, news, certificates, test]);
+    app.use('/api', [account, news, certificates, test, publications]);
 };

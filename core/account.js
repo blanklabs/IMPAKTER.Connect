@@ -121,7 +121,7 @@ async function login(req, res) {
     }
     if (email) {
         let usersFromDB = await fetchUser(email);
-        if (usersFromDB.length == 0) {
+        if (usersFromDB[0].length == 0) {
             response.status.code = transportCodes.SUCCESS;
             response.status.case = loginCases.NEWUSER;
             response.status.message = "No User found";
