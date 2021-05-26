@@ -28,7 +28,7 @@ import { fetchOrg, addOrg } from '../integration/organization.js';
 //import { loginCases, signupCases } from '../models/account.js';
 import { Transport, transportCodes, User, loginCases, signupCases, userModel } from "../../SHARED.CODE/index.mjs";
 //import { Transport, transportCodes, User, loginCases, signupCases, userModel  } from "shared.code/index.mjs";
-import { sendEmail } from '../integration/external/email.js'
+//import { sendEmail } from '../integration/external/email.js'
 
 
 function processJWT(currentUser, organization) {
@@ -195,7 +195,7 @@ async function signup(req, res) {
 
             let currentUser = await addUser(newUser)
             let accessToken = await processJWT(currentUser);
-            sendEmail("Signup Successful");
+            //sendEmail("Signup Successful");
             response.data.accessToken = accessToken;
             response.data.user = currentUser;
             response.status.code = transportCodes.SUCCESS;

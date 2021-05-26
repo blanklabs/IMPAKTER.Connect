@@ -1,9 +1,16 @@
-let organization = require('../integration/organization');
+import { fetchOrg, updateOrg } from '../integration/organization.js';
 
 
-exports.get = async function(req, res){
-    let sql_resp = await organization.apiGet(req);
-    res.json({msg:"Orgs fetched successfully",organizations: sql_resp})
+async function getOrg(req, res) {
+    let orgs = await fetchOrg(currentUser.orgID);
+    //response.data.org = orgs[0];
+    let resp = orgs[0];
+    res.json(resp);
+}
 
-    //organization.apiGet(req).then( sql_resp => res.json({msg:"Orgs fetched successfully",organizations: sql_resp}));
+async function putOrg(req, res) {
+    let resp = await updateOrg(req.body)
+    res.json(resp);
 };
+
+export { getOrg, putOrg }

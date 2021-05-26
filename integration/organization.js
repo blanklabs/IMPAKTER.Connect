@@ -63,7 +63,7 @@ async function fetchOrg(ID) {
 async function updateOrg(org) {
     return new Promise(async (resolve, reject) => {
         try {
-            sql_resp = await pool.query('UPDATE certificateOrganizations set ? where organizationID = ?', [org, org.orgID]);
+            let sql_resp = await pool.query('UPDATE organizations.orgs set ? where orgID = ?', [org, org.orgID]);
             resolve(sql_resp);
         }
         catch (err) {
