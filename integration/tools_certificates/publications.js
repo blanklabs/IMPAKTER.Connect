@@ -1,4 +1,4 @@
-import pool from "../config/db_connection.js";
+import pool from "../../config/db_connection.js";
 
 async function fetchPublicationById(publicationID) {
     return new Promise(async (resolve) => {

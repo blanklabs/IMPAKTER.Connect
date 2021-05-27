@@ -7,7 +7,7 @@ import { Transport, transportCodes, User, loginCases, signupCases, userModel } f
 import path from 'path';
 import fs from 'fs';
 
-import { fetchPublications, addPublication } from '../integration/tools_Certificates/publications.js';
+import { fetchPublications, addPublication } from '../../integration/tools_certificates/publications.js';
 
 
 function saveFile(file, orgID, location) {
