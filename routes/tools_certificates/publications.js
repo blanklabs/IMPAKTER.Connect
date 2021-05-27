@@ -1,9 +1,12 @@
 import express from 'express';
 const router = express.Router();
-import { upload } from '../../core/tools_certificates/publications.js';
+import { uploadPublication, getPublications } from '../../core/tools_certificates/publications.js';
+
+router.route('/publications/:ID?')
+    .get(getPublications)
 
 router.route('/publications/upload')
-    .post(upload)
+    .post(uploadPublication)
 
 
 export default router;

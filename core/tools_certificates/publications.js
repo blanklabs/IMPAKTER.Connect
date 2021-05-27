@@ -7,6 +7,9 @@ import { Transport, transportCodes, User, loginCases, signupCases, userModel } f
 import path from 'path';
 import fs from 'fs';
 
+import { fetchPublications, addPublication } from '../integration/tools_Certificates/publications.js';
+
+
 function saveFile(file, orgID, location) {
     let __dirname = path.resolve(path.dirname(''));
     return new Promise((resolve, reject) => {
@@ -49,12 +52,17 @@ function saveFile(file, orgID, location) {
 
 }
 
+async function getPublications(req, res) {
+    let resp = await fetchPublications(req)
+    res.json({ status: { code: 1 }, data: resp });
+};
 
-async function upload(req, res) {
+async function uploadPublication(req, res) {
     let loggedInUser = new User();
     let response = new Transport();
     let orgID = req.headers.orgid;
     let articleID = req.headers.articleid;
+    let articleTitle = req.headers.articleTitle;
     let location = articleID;
     let file = null;
     let fileName = null;
@@ -96,14 +104,14 @@ async function upload(req, res) {
         let ext = file.name.substring(extensionIndex);
         file.name = fileName + ext;
         await saveFile(file, orgID, location)
-
+        await addPublication({ publicationID: articleID, title: articleTitle, orgID: orgID })
     }
     response.status.code = transportCodes.SUCCESS;
     response.status.case = loginCases.SUCCESS;
-    response.status.message = "Upload Successful";
+    response.status.message = "UploadPublication Successful";
     res.json(response);
 
 };
 
 
-export { upload }
+export { uploadPublication, getPublications }
