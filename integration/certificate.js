@@ -9,7 +9,7 @@ import Certificate from "../models/certificate.js";
 function fetchSdgs(certificateID) {
     return new Promise(async (resolve) => {
         let sdgs = [];
-        let sql_resp = await pool.query('select sdgID from certificate_sdg where certificateID = ?', certificateID)
+        let sql_resp = await pool.query('select sdgID from index.certificate_sdg where certificateID = ?', certificateID)
         for (let i = 0; i < sql_resp.length; i++) {
             sdgs.push(sql_resp[i].sdgID)
         }
@@ -20,7 +20,7 @@ function fetchSdgs(certificateID) {
 function fetchSdgTargets(certificateID) {
     return new Promise(async (resolve) => {
         let sdgTargets = [];
-        let sql_resp = await pool.query('select sdgTargetID from certificate_sdgTarget where certificateID = ?', certificateID)
+        let sql_resp = await pool.query('select sdgTargetID from index.certificate_sdgTarget where certificateID = ?', certificateID)
         for (let i = 0; i < sql_resp.length; i++) {
             sdgTargets.push(sql_resp[i].sdgTargetID)
         }
@@ -31,7 +31,7 @@ function fetchSdgTargets(certificateID) {
 function fetchIndustries(certificateID) {
     return new Promise(async (resolve) => {
         let industries = [];
-        let sql_resp = await pool.query('select industryID from certificate_industry where certificateID = ?', certificateID)
+        let sql_resp = await pool.query('select industryID from index.certificate_industry where certificateID = ?', certificateID)
         for (let i = 0; i < sql_resp.length; i++) {
             industries.push(sql_resp[i].industryID)
         }
@@ -42,7 +42,7 @@ function fetchIndustries(certificateID) {
 function fetchIndustrySectors(certificateID) {
     return new Promise(async (resolve) => {
         let industrySectors = [];
-        let sql_resp = await pool.query('select industrySectorID from certificate_industrySector where certificateID = ?', certificateID)
+        let sql_resp = await pool.query('select industrySectorID from index.certificate_industrySector where certificateID = ?', certificateID)
         for (let i = 0; i < sql_resp.length; i++) {
             industrySectors.push(sql_resp[i].industrySectorID)
         }
@@ -53,7 +53,7 @@ function fetchIndustrySectors(certificateID) {
 function fetchDocuments(certificateID) {
     return new Promise(async (resolve) => {
         let documents = [];
-        let sql_resp = await pool.query('select * from certificate_document where certificateID = ?', certificateID)
+        let sql_resp = await pool.query('select * from index.certificate_document where certificateID = ?', certificateID)
         for (let i = 0; i < sql_resp.length; i++) {
             documents.push(sql_resp[i])
         }
@@ -61,15 +61,15 @@ function fetchDocuments(certificateID) {
     })
 }
 
-async function fetchCertificates(req) {
+async function fetchCertificates(orgID) {
     return new Promise(async (resolve, reject) => {
         let sql_resp;
         try {
             let certificates = [];
-            if (req.params.ID) {
-                sql_resp = await pool.query('select * from certificates where organizationID = ?', req.params.ID);
+            if (orgID) {
+                sql_resp = await pool.query('select * from index.certificates where orgID = ?', orgID);
             } else {
-                sql_resp = await pool.query('select * from certificates');
+                sql_resp = await pool.query('select * from index.certificates');
             }
 
             for (let i = 0; i < sql_resp.length; i++) {
@@ -126,41 +126,33 @@ async function getCertificates(req) {
 
 
 
-async function addCertificate(req) {
-    return new Promise((resolve, reject) => {
-
+async function addCertificate(certificateObject) {
+    return new Promise(async (resolve, reject) => {
         try {
-            let sql_resp = pool.query('INSERT INTO certificates SET ?', req.body.basicDetails);
+            let sql_resp = await pool.query('INSERT INTO index.certificates SET ?', certificateObject.certificate);
             let certificateId = sql_resp.insertId;
-            for (const sdg of req.body.sdgs) {
-                pool.query('INSERT INTO certificate_sdg (certificateID, sdgID) values (?,?)', [certificateId, sdg]);
+            for (const sdg of certificateObject.sdgs) {
+                await pool.query('INSERT INTO index.certificate_sdg (certificateID, sdgID) values (?,?)', [certificateId, sdg]);
             }
-            for (const sdgTarget of req.body.sdgTargets) {
-                pool.query('INSERT INTO certificate_sdgTarget (certificateID, sdgTargetID) values (?,?)', [certificateId, sdgTarget]);
+            for (const sdgTarget of certificateObject.sdgTargets) {
+                await pool.query('INSERT INTO index.certificate_sdgTarget (certificateID, sdgTargetID) values (?,?)', [certificateId, sdgTarget]);
             }
-            for (const industry of req.body.industries) {
-                pool.query('INSERT INTO certificate_industry (certificateID, industryID) values (?,?)', [certificateId, industry]);
+            for (const industry of certificateObject.industries) {
+                await pool.query('INSERT INTO index.certificate_industry (certificateID, industryID) values (?,?)', [certificateId, industry]);
             }
-            for (const industrySector of req.body.industrySectors) {
-                pool.query('INSERT INTO certificate_industrySector (certificateID, industrySectorID) values (?,?)', [certificateId, industrySector]);
+            for (const industrySector of certificateObject.industrySectors) {
+                await pool.query('INSERT INTO index.certificate_industrySector (certificateID, industrySectorID) values (?,?)', [certificateId, industrySector]);
             }
-            for (const document of req.body.documents) {
-                pool.query('INSERT INTO certificate_document (certificateID, documentName,languageName, documentUrl) values (?,?,?,?)', [certificateId, document.documentName, document.languageName, document.documentUrl]);
+            for (const document of certificateObject.documents) {
+                await pool.query('INSERT INTO index.certificate_document (certificateID, documentName,languageName, documentUrl) values (?,?,?,?)', [certificateId, document.documentName, document.languageName, document.documentUrl]);
             }
-
-            async function respond() {
-                res.json({
-                    msg: "Added Certificate successfully with ID:" + sql_resp.insertId,
-                    status: 1,
-                    insertId: sql_resp.insertId
-                });
-                console.log("added certificate successfully")
-            }
-
+            console.log("added certificate successfully");
+            resolve()
         } catch (err) {
             res.json({ msg: "Failed to add the certificate", status: 0 });
-            console.log("failed to add the certificate with the following error:")
-            console.log(err)
+            console.log("failed to add the certificate with the following error:", err)
+            reject(err);
+
         }
 
     });
@@ -196,10 +188,10 @@ async function removeCertificate(req, res) {
 };
 
 async function updateCertificate(req, res) {
-    if (req.body.mode == "statusChange") {
+    if (certificateObject.mode == "statusChange") {
         try {
-            var certificateId = req.body.certificateID
-            var sql_resp = await pool.query('UPDATE certificates SET activeStatus = ? WHERE certificateID = ?', [req.body.basicDetails.activeStatus, certificateId])
+            var certificateId = certificateObject.certificateID
+            var sql_resp = await pool.query('UPDATE index.certificates SET activeStatus = ? WHERE certificateID = ?', [certificateObject.basicDetails.activeStatus, certificateId])
             res.json({ msg: "Updated Certificate status successfully", status: 1 });
             console.log("updated certificate status successfully")
         } catch (err) {
@@ -208,19 +200,19 @@ async function updateCertificate(req, res) {
 
     } else {
         try {
-            var certificateId = req.body.certificateID
-            var sql_resp = await pool.query('UPDATE certificates SET ? WHERE certificateID = ?', [req.body.basicDetails, certificateId])
-            await pool.query('DELETE FROM certificate_sdg where certificateID = ?', certificateId)
-            await pool.query('DELETE FROM certificate_sdgTarget where certificateID = ?', certificateId)
+            var certificateId = certificateObject.certificateID
+            var sql_resp = await pool.query('UPDATE index.certificates SET ? WHERE certificateID = ?', [certificateObject.basicDetails, certificateId])
+            await pool.query('DELETE FROM index.certificate_sdg where certificateID = ?', certificateId)
+            await pool.query('DELETE FROM index.certificate_sdgTarget where certificateID = ?', certificateId)
 
-            req.body.sdgs.forEach(sdg => pool.query('INSERT INTO certificate_sdg (certificateID, sdgID) values (?,?)', [certificateId, sdg]))
-            req.body.sdgTargets.forEach(sdgTarget => pool.query('INSERT INTO certificate_sdgTarget (certificateID, sdgTargetID) values (?,?)', [certificateId, sdgTarget]))
+            certificateObject.sdgs.forEach(sdg => pool.query('INSERT INTO index.certificate_sdg (certificateID, sdgID) values (?,?)', [certificateId, sdg]))
+            certificateObject.sdgTargets.forEach(sdgTarget => pool.query('INSERT INTO index.certificate_sdgTarget (certificateID, sdgTargetID) values (?,?)', [certificateId, sdgTarget]))
 
-            await pool.query('DELETE FROM certificate_industry where certificateID = ?', certificateId)
-            await pool.query('DELETE FROM certificate_industrySector where certificateID = ?', certificateId)
+            await pool.query('DELETE FROM index.certificate_industry where certificateID = ?', certificateId)
+            await pool.query('DELETE FROM index.certificate_industrySector where certificateID = ?', certificateId)
 
-            req.body.industries.forEach(industry => pool.query('INSERT INTO certificate_industry (certificateID, industryID) values (?,?)', [certificateId, industry]))
-            req.body.industrySectors.forEach(industrySector => pool.query('INSERT INTO certificate_industrySector (certificateID, industrySectorID) values (?,?)', [certificateId, industrySector]))
+            certificateObject.industries.forEach(industry => pool.query('INSERT INTO index.certificate_industry (certificateID, industryID) values (?,?)', [certificateId, industry]))
+            certificateObject.industrySectors.forEach(industrySector => pool.query('INSERT INTO index.certificate_industrySector (certificateID, industrySectorID) values (?,?)', [certificateId, industrySector]))
 
             setTimeout(respond, 3000);
 

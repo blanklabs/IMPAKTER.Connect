@@ -10,16 +10,16 @@ async function fetchPublicationById(publicationID) {
 async function fetchPublications(req) {
     return new Promise(async (resolve) => {
         let sql_resp = await pool.query('select * from indexCertificates.publications where orgID = ?', req.params.ID);
-        resolve(sql_resp[0]);
+        resolve(sql_resp);
     })
 }
 
 async function addPublication(newPublication) {
     return new Promise(async (resolve, reject) => {
         try {
-            let sql_resp = await pool.query('insert into indexCertificates.publications (publicationID,title,orgID) values (?,?,?,?)', [newPublication.publicationID, newPublication.title, newPublication.orgID]);
+            let sql_resp = await pool.query('insert into indexCertificates.publications (publicationID,title,orgID) values (?,?,?)', [newPublication.publicationID, newPublication.title, newPublication.orgID]);
             let publicationID = sql_resp.insertId;
-            let currentPublication = await fetchpublicationById(publicationID);
+            let currentPublication = await fetchPublicationById(publicationID);
             resolve(currentPublication);
         }
         catch (err) {
