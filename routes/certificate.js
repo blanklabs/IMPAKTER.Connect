@@ -15,10 +15,10 @@ module.exports = router;
 
 import express from 'express';
 const router = express.Router();
-import { getCertificate, postCertificate, putCertificate, deleteCertificate } from '../core/certificate.js';
+import { getCertificates, postCertificate, putCertificate, deleteCertificate } from '../core/certificate.js';
 
 router.route('/certificates/:ID?')
-    .get(getCertificate)
+    .get(getCertificates)
     .post(postCertificate)
     .put(putCertificate)
     .delete(deleteCertificate)

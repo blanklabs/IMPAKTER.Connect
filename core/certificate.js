@@ -76,12 +76,6 @@ async function postCertificate(req, res) {
 
 }
 
-
-async function postCertificate(req, res) {
-    let resp = await addCertificate(req)
-    res.json(resp);
-};
-
 async function putCertificate(req, res) {
     let resp = await updateCertificate(req)
     res.json(resp);
