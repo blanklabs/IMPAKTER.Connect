@@ -1,6 +1,6 @@
 //const certificate = require('../integration/certificate');
 import { fetchCertificates, addCertificate, updateCertificate, removeCertificate } from '../integration/certificate.js';
-import { Transport, transportCodes, generalCases } from "../../SHARED.CODE/index.mjs";
+import { Transport, transportCodes, generalCases, certificateCases } from "../../SHARED.CODE/index.mjs";
 
 
 
@@ -42,15 +42,15 @@ async function postCertificate(req, res) {
     let response = new Transport();
     const currentCase = req.body.status.case
     if (req.body.data) {
-        if (currentCase == "NEW") {
-            let status = await addCertificate(req.body.data);
-            if (status) {
+        if (currentCase == certificateCases.NEW) {
+            try {
+                await addCertificate(req.body.data);
                 response.data = true;
                 response.status.code = transportCodes.SUCCESS;
                 response.status.case = generalCases.SUCCESS;
                 response.status.message = "certificate added Successfully";
             }
-            else {
+            catch (err) {
                 response.status.code = transportCodes.SUCCESS;
                 response.status.case = generalCases.FAILED;
                 response.status.message = "Failed to add certificate";

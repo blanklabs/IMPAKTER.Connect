@@ -3,7 +3,7 @@
 //const pool = require("../config/db_connection");
 
 import pool from "../config/db_connection.js";
-import Certificate from "../models/certificate.js";
+import { certificateObject } from "../../SHARED.CODE/index.mjs";
 
 
 function fetchSdgs(certificateID) {
@@ -82,8 +82,14 @@ async function fetchCertificates(orgID) {
                     fetchIndustrySectors(certificateID),
                     fetchDocuments(certificateID)
                 ]).then((response) => {
-                    let certificate = new Certificate(sql_resp[i], response[0], response[1], response[2], response[3], response[4])
-                    certificates.push(certificate)
+                    let certificateObj = new certificateObject(orgID);
+                    certificateObj.certificate = sql_resp[i];
+                    certificateObj.sdgs = response[0];
+                    certificateObj.sdgTargets = response[1];
+                    certificateObj.industries = response[2];
+                    certificateObj.industrySectors = response[3];
+                    certificateObj.documents = response[4];
+                    certificates.push(certificateObj)
                 })
 
             }
@@ -128,31 +134,51 @@ async function getCertificates(req) {
 
 async function addCertificate(certificateObject) {
     return new Promise(async (resolve, reject) => {
+        let certificateId = null;
         try {
             let sql_resp = await pool.query('INSERT INTO index.certificates SET ?', certificateObject.certificate);
-            let certificateId = sql_resp.insertId;
-            for (const sdg of certificateObject.sdgs) {
-                await pool.query('INSERT INTO index.certificate_sdg (certificateID, sdgID) values (?,?)', [certificateId, sdg]);
+            certificateId = sql_resp.insertId;
+
+            if (certificateObject.sdgs.length > 0) {
+                for (const sdg of certificateObject.sdgs) {
+                    await pool.query('INSERT INTO index.certificate_sdg (certificateID, sdgID) values (?,?)', [certificateId, sdg]);
+                }
             }
-            for (const sdgTarget of certificateObject.sdgTargets) {
-                await pool.query('INSERT INTO index.certificate_sdgTarget (certificateID, sdgTargetID) values (?,?)', [certificateId, sdgTarget]);
+
+
+            if (certificateObject.sdgTargets.length > 0) {
+                for (const sdgTarget of certificateObject.sdgTargets) {
+                    await pool.query('INSERT INTO index.certificate_sdgTarget (certificateID, sdgTargetID) values (?,?)', [certificateId, sdgTarget]);
+                }
             }
-            for (const industry of certificateObject.industries) {
-                await pool.query('INSERT INTO index.certificate_industry (certificateID, industryID) values (?,?)', [certificateId, industry]);
+
+
+            if (certificateObject.industries.length > 0) {
+                for (const industry of certificateObject.industries) {
+                    await pool.query('INSERT INTO index.certificate_industry (certificateID, industryID) values (?,?)', [certificateId, industry]);
+                }
+
             }
-            for (const industrySector of certificateObject.industrySectors) {
-                await pool.query('INSERT INTO index.certificate_industrySector (certificateID, industrySectorID) values (?,?)', [certificateId, industrySector]);
+
+            if (certificateObject.industrySectors.length > 0) {
+                for (const industrySector of certificateObject.industrySectors) {
+                    await pool.query('INSERT INTO index.certificate_industrySector (certificateID, industrySectorID) values (?,?)', [certificateId, industrySector]);
+                }
             }
-            for (const document of certificateObject.documents) {
-                await pool.query('INSERT INTO index.certificate_document (certificateID, documentName,languageName, documentUrl) values (?,?,?,?)', [certificateId, document.documentName, document.languageName, document.documentUrl]);
+
+
+            if (certificateObject.documents.length > 0) {
+                for (const document of certificateObject.documents) {
+                    await pool.query('INSERT INTO index.certificate_document (certificateID, name,language, url) values (?,?,?,?)', [certificateId, document.name, document.language, document.url]);
+                }
             }
+
             console.log("added certificate successfully");
             resolve()
         } catch (err) {
-            res.json({ msg: "Failed to add the certificate", status: 0 });
             console.log("failed to add the certificate with the following error:", err)
+            this.removeCertificate(certificateId)
             reject(err);
-
         }
 
     });
@@ -160,11 +186,8 @@ async function addCertificate(certificateObject) {
 
 };
 
-async function removeCertificate(req, res) {
+async function removeCertificate(certificateId) {
     try {
-        if (req.params.ID) {
-            var certificateId = req.params.ID;
-        }
         var sql_resp = await pool.query('DELETE FROM certificates where certificateID = ?', certificateId)
         await pool.query('DELETE FROM certificate_sdg where certificateID = ?', certificateId)
         await pool.query('DELETE FROM certificate_sdgTarget where certificateID = ?', certificateId)
@@ -172,15 +195,8 @@ async function removeCertificate(req, res) {
         await pool.query('DELETE FROM certificate_industry where certificateID = ?', certificateId)
         await pool.query('DELETE FROM certificate_industrySector where certificateID = ?', certificateId)
 
-        setTimeout(respond, 2000);
-
-        async function respond() {
-            res.json({ msg: "Deleted Certificate successfully", status: 1 });
-            console.log("deleted certificate successfully")
-        }
 
     } catch (err) {
-        res.json({ msg: "Failed to delete the certificate", status: 0 });
         console.log("failed to delete the certificate with the following error:")
         console.log(err)
     }
