@@ -108,7 +108,10 @@ async function fetchCertificates(orgID) {
 
 };
 
-//Using stored procedure
+//todo - use stored procedure to fetchCertificates
+
+
+//Archive - Using stored procedure
 async function getCertificates(req) {
     return new Promise(async (resolve, reject) => {
         let sql_resp;
@@ -129,7 +132,6 @@ async function getCertificates(req) {
     });
 
 }
-
 
 
 async function addCertificate(certificateObject) {

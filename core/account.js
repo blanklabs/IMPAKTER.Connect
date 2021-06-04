@@ -21,7 +21,7 @@ const client = new OAuth2Client('1034424481051-2068pl88n61ofbmnocqbdgk9fk8i9o20.
 
 
 import { fetchUser, addUser } from '../integration/user.js';
-import { fetchOrg, addOrg } from '../integration/organization.js';
+import { fetchCertOrg } from '../integration/organization.js';
 
 //import { Transport, codes as transportCodes } from '../models/transport.js';
 //import User from '../models/user.js';
@@ -108,7 +108,9 @@ function processGoogleLogin(googleData) {
 async function login(req, res) {
     let loggedInUser = new User();
     let response = new Transport();
-    const currentCase = req.body.status.case
+    const currentCase = req.body.status.case;
+    let currentApplication = req.body.status.app;
+    currentApplication = "CERT";
     let email;
     let verifyStatus;
 
@@ -136,9 +138,12 @@ async function login(req, res) {
             }
             if (verifyStatus) {
                 currentUser.password = ""
-                let orgs = await fetchOrg(currentUser.orgID);
-                let accessToken = await processJWT(currentUser, orgs[0])
-                response.data.org = orgs[0];
+                let org;
+                if (currentApplication == "CERT") {
+                    org = await fetchCertOrg(currentUser.orgID);
+                }
+                let accessToken = await processJWT(currentUser, org);
+                response.data.org = org;
                 response.data.user = currentUser;
                 response.data.accessToken = accessToken;
                 response.status.code = transportCodes.SUCCESS;

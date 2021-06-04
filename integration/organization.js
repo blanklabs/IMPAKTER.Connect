@@ -1,6 +1,7 @@
 import pool from "../config/db_connection.js";
 //const { v4: uuidv4 } = require('uuid');
 
+import { OrganizationModel } from "../../SHARED.CODE/index.mjs";
 
 async function fetchAllOrgs() {
     return new Promise(async (resolve, reject) => {
@@ -74,5 +75,34 @@ async function updateOrg(org) {
 
 }
 
+async function fetchCertOrg(ID) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            //use stored proc to fetch certificate Organization
+            let sql_resp = await pool.query('CALL organizations.tcGetCertificateOrg(?)', ID);
+            let orgObj = new OrganizationModel();
+            let dbOrg = sql_resp[0][0];
+            orgObj.organization.orgID = dbOrg.orgID;
+            orgObj.organization.name = dbOrg.name;
+            orgObj.organization.url = dbOrg.url;
+            orgObj.organization.description = dbOrg.description;
+            orgObj.organization.logoUrl = dbOrg.logoUrl;
+            orgObj.orgCommunication.phone = dbOrg.phone;
+            orgObj.orgCommunication.email = dbOrg.email;
+            orgObj.orgCommunication.facebookUrl = dbOrg.facebookUrl;
+            orgObj.orgCommunication.twitterUrl = dbOrg.twitterUrl;
+            orgObj.orgCommunication.instagramUrl = dbOrg.instagramUrl;
+            orgObj.orgCommunication.videoUrl = dbOrg.videoUrl;
+            orgObj.orgSustainability.sdgs = dbOrg.sdgs;
+            resolve(orgObj);
+        }
+        catch (err) {
+            reject(err);
+        }
 
-export { fetchAllOrgs, fetchOrgByName, fetchOrg, addOrg, updateOrg }
+    });
+
+}
+
+
+export { fetchAllOrgs, fetchOrgByName, fetchOrg, addOrg, updateOrg, fetchCertOrg }
