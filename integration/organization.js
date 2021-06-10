@@ -1,7 +1,7 @@
 import pool from "../config/db_connection.js";
 //const { v4: uuidv4 } = require('uuid');
 
-import { OrganizationModel } from "../../SHARED.CODE/index.mjs";
+import { OrganizationObject } from "../../SHARED.CODE/index.mjs";
 
 async function fetchAllOrgs() {
     return new Promise(async (resolve, reject) => {
@@ -80,7 +80,7 @@ async function fetchCertOrg(ID) {
         try {
             //use stored proc to fetch certificate Organization
             let sql_resp = await pool.query('CALL organizations.tcGetCertificateOrg(?)', ID);
-            let orgObj = new OrganizationModel();
+            let orgObj = new OrganizationObject();
             let dbOrg = sql_resp[0][0];
             orgObj.organization.orgID = dbOrg.orgID;
             orgObj.organization.name = dbOrg.name;

@@ -3,7 +3,7 @@
 //const pool = require("../config/db_connection");
 
 import pool from "../config/db_connection.js";
-import { certificateObject } from "../../SHARED.CODE/index.mjs";
+import { CertificateObject } from "../../SHARED.CODE/index.mjs";
 
 
 function fetchSdgs(certificateID) {

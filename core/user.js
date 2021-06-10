@@ -2,7 +2,7 @@
 //import { Transport, codes as transportCodes } from '../models/transport.js';
 //import User from '../models/user.js';
 //import { loginCases, signupCases } from '../models/account.js';
-import { Transport, transportCodes, User, updateCases, userModel } from "../../SHARED.CODE/index.mjs";
+import { Transport, transportCodes, UserObject, updateCases } from "../../SHARED.CODE/index.mjs";
 //import { Transport, transportCodes, User, loginCases, signupCases, userModel  } from "shared.code/index.mjs";
 import { sendEmail } from '../integration/external/email.js'
 
@@ -13,7 +13,7 @@ import { getOrgByName } from '../integration/organization.js'
 
 async function putUser(req, res) {
     let response = new Transport();
-    let currentUser = new User();
+    let currentUser = new UserObject();
     currentUser = req.body.data;
 
     if (!currentUser.orgID) {

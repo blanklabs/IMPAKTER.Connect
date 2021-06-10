@@ -4,6 +4,8 @@
 
 //const user = require("../models/User.js");
 import pool from "../config/db_connection.js";
+import { UserObject } from "../../SHARED.CODE/index.mjs";
+
 
 async function fetchUserById(userID) {
     return new Promise(async (resolve) => {
@@ -22,22 +24,47 @@ async function fetchUserProfileById(userID) {
 }
 
 
-async function fetchUser(email) {
-    return new Promise(async (resolve) => {
+async function fetchUser(email, userID) {
+    let currentUserObj = new UserObject();
+    return new Promise(async (resolve, reject) => {
         //let sql_resp1 = await pool.query('select * from users.users where email = ?', email);
-        let sql_resp = await pool.query('CALL users.spFetchUser(?)', email);
-        resolve(sql_resp);
+        if (email || userID) {
+            let sql_resp = await pool.query('CALL users.spFetchUser(?,?)', [email, userID]);
+            if (sql_resp[0].length != 0) {
+                let dbUser = sql_resp[0][0];
+
+                currentUserObj.user.email = dbUser.email;
+                currentUserObj.user.firstName = dbUser.firstName;
+                currentUserObj.user.lastName = dbUser.lastName;
+                currentUserObj.user.roleID = dbUser.roleID;
+                currentUserObj.user.orgID = dbUser.orgID;
+                currentUserObj.user.password = dbUser.password;
+                currentUserObj.organization.orgID = dbUser.orgID;
+                currentUserObj.organization.name = dbUser.orgName;
+                currentUserObj.userInformation.roleInOrg = dbUser.roleInOrg;
+            }
+            resolve(currentUserObj);
+        }
+        else {
+            reject()
+        }
+
     })
 }
 
-async function addUser(newUser) {
+async function addUser(newUserObj) {
+    let currentUserObj = new UserObject();
+
     return new Promise(async (resolve, reject) => {
         //let sql_resp1 = await pool.query('insert into users.users set ?', newUser);
         try {
-            let sql_resp = await pool.query('insert into users.users (email,firstName,lastName,password) values (?,?,?,?)', [newUser.email, newUser.firstName, newUser.lastName, newUser.password]);
-            let userID = sql_resp.insertId;
-            let currentUser = await fetchUserById(userID);
-            resolve(currentUser);
+            let sql_resp = await pool.query('CALL users.spAddUser(?,?,?,?,?,?,?)',
+                [newUserObj.user.firstName ?? "", newUserObj.user.lastName ?? "", newUserObj.user.email ?? "", newUserObj.user.password ?? "",
+                newUserObj.organization.roleID ?? 1, newUserObj.organization.orgID ?? 1, newUserObj.userInformation.roleInOrg ?? ""
+                ]);
+            let userID = sql_resp[0][0];
+            currentUserObj = await fetchUser("", userID)
+            resolve(currentUserObj);
         }
         catch (err) {
             reject(err)

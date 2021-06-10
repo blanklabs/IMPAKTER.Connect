@@ -26,7 +26,7 @@ import { fetchCertOrg } from '../integration/organization.js';
 //import { Transport, codes as transportCodes } from '../models/transport.js';
 //import User from '../models/user.js';
 //import { loginCases, signupCases } from '../models/account.js';
-import { Transport, transportCodes, User, loginCases, signupCases, userModel } from "../../SHARED.CODE/index.mjs";
+import { Transport, transportCodes, UserObject, User, loginCases, signupCases } from "../../SHARED.CODE/index.mjs";
 //import { Transport, transportCodes, User, loginCases, signupCases, userModel  } from "shared.code/index.mjs";
 //import { sendEmail } from '../integration/external/email.js'
 
@@ -106,7 +106,7 @@ function processGoogleLogin(googleData) {
 
 
 async function login(req, res) {
-    let loggedInUser = new User();
+    let loggedInUser = new UserObject();
     let response = new Transport();
     const currentCase = req.body.status.case;
     let currentApplication = req.body.status.app;
@@ -122,14 +122,15 @@ async function login(req, res) {
         loggedInUser = req.body.data;
     }
     if (email) {
-        let usersFromDB = await fetchUser(email);
-        if (usersFromDB[0].length == 0) {
+        let currentUserObj = new UserObject();
+        currentUserObj = await fetchUser(email, 0);
+        if (currentUserObj.user) {
             response.status.code = transportCodes.SUCCESS;
             response.status.case = loginCases.NEWUSER;
             response.status.message = "No User found";
         }
         else {
-            let currentUser = usersFromDB[0][0];
+            let currentUser = currentUserObj.user;
             if (currentCase == loginCases.DIRECT) {
                 verifyStatus = await verifyPassword(loggedInUser, currentUser);
             }
@@ -141,6 +142,9 @@ async function login(req, res) {
                 let org;
                 if (currentApplication == "CERT") {
                     org = await fetchCertOrg(currentUser.orgID);
+                }
+                else {
+                    org = currentUserObj.organization;
                 }
                 let accessToken = await processJWT(currentUser, org);
                 response.data.org = org;
@@ -177,18 +181,21 @@ async function login(req, res) {
 async function signup(req, res) {
     let response = new Transport();
     console.log("process.env.MAIL_USERNAME:", process.env.MAIL_USERNAME)
+    let newUserObj = new UserObject();
     let newUser = new User();
     const currentCase = req.body.status.case
 
     if (currentCase == loginCases.GOOGLE) {
-        newUser.email = req.body.data.ft.Qt
+        newUserObj.email = req.body.data.ft.Qt
         //newuser.firstName = req.body.data.
     } else {
-        newUser = req.body.data;
+        newUserObj = req.body.data;
+        newUser = newUserObj.user;
     }
     if (newUser.email && newUser.firstName) {
-        let usersFromDB = await fetchUser(newUser.email);
-        if (usersFromDB[0].length == 0) {
+        let currentUserObj = new UserObject();
+        currentUserObj = await fetchUser(newUser.email, 0);
+        if (!currentUserObj.user.userID) {
 
             if (currentCase == loginCases.GOOGLE) {
                 newUser.password = "NA";
@@ -197,12 +204,15 @@ async function signup(req, res) {
                 let passwordHash = await hashPassword(newUser.password);
                 newUser.password = passwordHash;
             }
-
-            let currentUser = await addUser(newUser)
-            let accessToken = await processJWT(currentUser);
+            if (!newUserObj.organization.orgID) {
+                //todo create Org
+            }
+            currentUserObj = await addUser(newUserObj)
+            let accessToken = await processJWT(currentUserObj.user, currentUserObj.organization);
             //sendEmail("Signup Successful");
+            response.data.org = currentUserObj.organization;
+            response.data.user = currentUserObj.user;
             response.data.accessToken = accessToken;
-            response.data.user = currentUser;
             response.status.code = transportCodes.SUCCESS;
             response.status.case = signupCases.SUCCESS;
             response.status.message = "SignUp Successful";
