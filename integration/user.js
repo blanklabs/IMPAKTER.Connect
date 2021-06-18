@@ -62,7 +62,8 @@ async function addUser(newUserObj) {
                 [newUserObj.user.firstName ?? "", newUserObj.user.lastName ?? "", newUserObj.user.email ?? "", newUserObj.user.password ?? "",
                 newUserObj.organization.roleID ?? 1, newUserObj.organization.orgID ?? 1, newUserObj.userInformation.roleInOrg ?? ""
                 ]);
-            let userID = sql_resp[0][0];
+            let userIDObj = sql_resp[0][0];
+            let userID = userIDObj.insertId;
             currentUserObj = await fetchUser("", userID)
             resolve(currentUserObj);
         }

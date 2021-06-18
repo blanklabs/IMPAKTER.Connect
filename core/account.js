@@ -112,6 +112,7 @@ async function login(req, res) {
     let currentApplication = req.body.status.app;
     currentApplication = "CERT";
     let email;
+    let password;
     let verifyStatus;
 
     if (currentCase == loginCases.GOOGLE) {
@@ -119,12 +120,13 @@ async function login(req, res) {
         email = req.body.data.ft.Qt
     } else {
         email = req.body.data.email;
+        password = req.body.data.password;
         loggedInUser = req.body.data;
     }
-    if (email) {
+    if (email && password) {
         let currentUserObj = new UserObject();
         currentUserObj = await fetchUser(email, 0);
-        if (currentUserObj.user) {
+        if (!currentUserObj.user) {
             response.status.code = transportCodes.SUCCESS;
             response.status.case = loginCases.NEWUSER;
             response.status.message = "No User found";
@@ -180,7 +182,6 @@ async function login(req, res) {
 
 async function signup(req, res) {
     let response = new Transport();
-    console.log("process.env.MAIL_USERNAME:", process.env.MAIL_USERNAME)
     let newUserObj = new UserObject();
     let newUser = new User();
     const currentCase = req.body.status.case
