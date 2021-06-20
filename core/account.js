@@ -21,7 +21,6 @@ const client = new OAuth2Client('1034424481051-2068pl88n61ofbmnocqbdgk9fk8i9o20.
 
 
 import { fetchUser, addUser } from '../integration/user.js';
-import { fetchCertOrg } from '../integration/organization.js';
 
 //import { Transport, codes as transportCodes } from '../models/transport.js';
 //import User from '../models/user.js';
@@ -109,8 +108,6 @@ async function login(req, res) {
     let loggedInUser = new UserObject();
     let response = new Transport();
     const currentCase = req.body.status.case;
-    let currentApplication = req.body.status.app;
-    currentApplication = "CERT";
     let email;
     let password;
     let verifyStatus;
@@ -141,16 +138,8 @@ async function login(req, res) {
             }
             if (verifyStatus) {
                 currentUser.password = ""
-                let org;
-                if (currentApplication == "CERT") {
-                    org = await fetchCertOrg(currentUser.orgID);
-                }
-                else {
-                    org = currentUserObj.organization;
-                }
-                let accessToken = await processJWT(currentUser, org);
-                response.data.org = org;
-                response.data.user = currentUser;
+                let accessToken = await processJWT(currentUser, currentUserObj.organization);
+                response.data.userObj = currentUserObj;
                 response.data.accessToken = accessToken;
                 response.status.code = transportCodes.SUCCESS;
                 response.status.case = loginCases.SUCCESS;
@@ -180,12 +169,12 @@ async function login(req, res) {
 
 };
 
+
 async function signup(req, res) {
     let response = new Transport();
     let newUserObj = new UserObject();
     let newUser = new User();
     const currentCase = req.body.status.case
-
     if (currentCase == loginCases.GOOGLE) {
         newUserObj.email = req.body.data.ft.Qt
         //newuser.firstName = req.body.data.
@@ -195,7 +184,7 @@ async function signup(req, res) {
     }
     if (newUser.email && newUser.firstName) {
         let currentUserObj = new UserObject();
-        currentUserObj = await fetchUser(newUser.email, 0);
+        currentUserObj = await fetchUser(newUser);
         if (!currentUserObj.user.userID) {
 
             if (currentCase == loginCases.GOOGLE) {
@@ -205,14 +194,10 @@ async function signup(req, res) {
                 let passwordHash = await hashPassword(newUser.password);
                 newUser.password = passwordHash;
             }
-            if (!newUserObj.organization.orgID) {
-                //todo create Org
-            }
             currentUserObj = await addUser(newUserObj)
             let accessToken = await processJWT(currentUserObj.user, currentUserObj.organization);
             //sendEmail("Signup Successful");
-            response.data.org = currentUserObj.organization;
-            response.data.user = currentUserObj.user;
+            response.data.userObj = currentUserObj
             response.data.accessToken = accessToken;
             response.status.code = transportCodes.SUCCESS;
             response.status.case = signupCases.SUCCESS;

@@ -24,15 +24,14 @@ async function fetchUserProfileById(userID) {
 }
 
 
-async function fetchUser(email, userID) {
+async function fetchUser(user) {
     let currentUserObj = new UserObject();
     return new Promise(async (resolve, reject) => {
         //let sql_resp1 = await pool.query('select * from users.users where email = ?', email);
-        if (email || userID) {
-            let sql_resp = await pool.query('CALL users.spFetchUser(?,?)', [email, userID]);
+        if (user) {
+            let sql_resp = await pool.query('CALL users.spFetchUser(?,?,?,?)', [user.email ?? "", user.userID ?? 0, user.firstName ?? "", user.lastName ?? ""]);
             if (sql_resp[0].length != 0) {
                 let dbUser = sql_resp[0][0];
-
                 currentUserObj.user.email = dbUser.email;
                 currentUserObj.user.firstName = dbUser.firstName;
                 currentUserObj.user.lastName = dbUser.lastName;
@@ -60,11 +59,13 @@ async function addUser(newUserObj) {
         try {
             let sql_resp = await pool.query('CALL users.spAddUser(?,?,?,?,?,?,?)',
                 [newUserObj.user.firstName ?? "", newUserObj.user.lastName ?? "", newUserObj.user.email ?? "", newUserObj.user.password ?? "",
-                newUserObj.organization.roleID ?? 1, newUserObj.organization.orgID ?? 1, newUserObj.userInformation.roleInOrg ?? ""
+                newUserObj.user.roleID ?? 1, newUserObj.organization.orgID ?? 1, newUserObj.userInformation.roleInOrg ?? ""
                 ]);
             let userIDObj = sql_resp[0][0];
             let userID = userIDObj.insertId;
-            currentUserObj = await fetchUser("", userID)
+            let currentUser = new UserObject();
+            currentUser.userID = userID;
+            currentUserObj = await fetchUser(currentUser)
             resolve(currentUserObj);
         }
         catch (err) {
