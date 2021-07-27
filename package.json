@@ -1,10 +1,11 @@
 {
-  "name": "index-certificate-api",
+  "name": "impakter-api",
   "version": "1.0.0",
-  "description": "Impakter Certificate Tool backend",
+  "description": "ImpakterTools backend",
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "start": "node index.js",
     "test": "test"
   },
   "repository": {
