@@ -12,10 +12,16 @@
 
 import express from 'express';
 const router = express.Router();
-import { getOrg, putOrg } from '../core/organization.js';
+import { getOrg, putOrg, getAllOrgs, getOrgDetails } from '../core/organization.js';
 
-router.route('/org/:orgID?')
+router.route('/org/:ID?')
     .get(getOrg)
     .post(putOrg)
+
+router.route('/org/all')
+    .get(getAllOrgs)
+
+router.route('/org/details/:ID?')
+    .get(getOrgDetails)
 
 export default router;

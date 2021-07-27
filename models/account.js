@@ -1,15 +1,15 @@
 const loginCases = {
     NEWUSER: "NEWUSER",
     FAILEDLOGIN: "FAILEDLOGIN",
-    SUCCESS: "SUCCESS"
+    SUCCESS: "LOGINSUCCESS"
 }
 
 const signupCases = {
     EXISTING: "EXISTING",
-    SUCCESS: "SUCCESS",
+    SUCCESS: "SIGNUPSUCCESS",
     FAILED: "FAILED"
 }
 
-export { loginCases, signupCases }
+export {loginCases, signupCases}
 
 //module.exports = { loginCases, signupCases }
