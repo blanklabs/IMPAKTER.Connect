@@ -82,7 +82,7 @@ async function fetchCertificates(orgID) {
                     fetchIndustrySectors(certificateID),
                     fetchDocuments(certificateID)
                 ]).then((response) => {
-                    let certificateObj = new certificateObject(orgID);
+                    let certificateObj = new CertificateObject(orgID);
                     certificateObj.certificate = sql_resp[i];
                     certificateObj.sdgs = response[0];
                     certificateObj.sdgTargets = response[1];

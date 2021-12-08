@@ -5,6 +5,7 @@
 //const user = require("../models/User.js");
 import pool from "../config/db_connection.js";
 import { UserObject } from "../../SHARED.CODE/index.mjs";
+import { User } from "../../SHARED.CODE/Objects/User/userObjects.js";
 
 
 async function fetchUserById(userID) {
@@ -23,6 +24,11 @@ async function fetchUserProfileById(userID) {
     })
 }
 
+async function fetchUserByEmail(email) {
+    let user = new User()
+    user.email = email
+    return fetchUser(user)
+}
 
 async function fetchUser(user) {
     let currentUserObj = new UserObject();
@@ -85,4 +91,4 @@ async function updateUser(currentUser) {
 }
 
 //module.exports = {fetchUser, addUser}
-export { fetchUser, addUser, updateUser }
+export { fetchUser, addUser, updateUser, fetchUserByEmail }

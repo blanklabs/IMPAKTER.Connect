@@ -19,18 +19,24 @@ async function checkUser(req, res) {
     newUser = newUserObj.user;
     if (newUser.email || newUser.userID || newUser.firstName || newUser.lastName) {
         let currentUserObj = new UserObject();
-        currentUserObj = await fetchUser(newUser);
-        if (currentUserObj.user.userID) {
-            response.data = currentUserObj;
-            response.status.code = transportCodes.SUCCESS;
-            response.status.case = signupCases.EXISTING;
-            response.status.message = "User already exists";
+        try {
+            currentUserObj = await fetchUser(newUser);
+            if (currentUserObj.user.userID) {
+                response.data = currentUserObj;
+                response.status.code = transportCodes.SUCCESS;
+                response.status.case = signupCases.EXISTING;
+                response.status.message = "User already exists";
+            }
+            else {
+                response.status.code = transportCodes.SUCCESS;
+                response.status.case = signupCases.NEWUSER;
+                response.status.message = "New User";
+            }
         }
-        else {
-            response.status.code = transportCodes.SUCCESS;
-            response.status.case = signupCases.NEWUSER;
-            response.status.message = "New User";
+        catch (err) {
+            console.log(err);
         }
+
     }
     else {
         response.status.code = transportCodes.SUCCESS;

@@ -20,7 +20,7 @@ import { OAuth2Client } from 'google-auth-library';
 const client = new OAuth2Client('1034424481051-2068pl88n61ofbmnocqbdgk9fk8i9o20.apps.googleusercontent.com');
 
 
-import { fetchUser, addUser } from '../integration/user.js';
+import { fetchUser, addUser, fetchUserByEmail } from '../integration/user.js';
 
 //import { Transport, codes as transportCodes } from '../models/transport.js';
 //import User from '../models/user.js';
@@ -122,7 +122,7 @@ async function login(req, res) {
     }
     if (email && password) {
         let currentUserObj = new UserObject();
-        currentUserObj = await fetchUser(email, 0);
+        currentUserObj = await fetchUserByEmail(email, 0);
         if (!currentUserObj.user) {
             response.status.code = transportCodes.SUCCESS;
             response.status.case = loginCases.NEWUSER;
